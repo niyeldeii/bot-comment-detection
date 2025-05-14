@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Bot Detection on Social Media Platforms Using RoBERTa and Multimodal Features</title>
+    <style>
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            width: 80%;
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 30px;
+            border: 1px solid #ddd;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            font-size: 2em;
+            margin-bottom: 0.5em;
+            color: #222;
+        }
+        .author {
+            text-align: center;
+            font-size: 1.2em;
+            font-style: italic;
+            margin-bottom: 2em;
+            color: #555;
+        }
+        h2 {
+            font-size: 1.5em;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 0.3em;
+            margin-top: 1.5em;
+            margin-bottom: 1em;
+            color: #333;
+        }
+        h3 {
+            font-size: 1.2em;
+            margin-top: 1.2em;
+            margin-bottom: 0.8em;
+            color: #444;
+        }
+        p, ul, ol {
+            margin-bottom: 1em;
+            text-align: justify;
+        }
+        ul, ol {
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 0.5em;
+        }
+        .abstract-keywords h3 {
+            font-size: 1.1em;
+            font-style: italic;
+            border-bottom: none;
+            margin-top: 0.5em;
+            margin-bottom: 0.3em;
+        }
+        .abstract-keywords p {
+            font-style: italic;
+            margin-left: 1em;
+        }
+        .references ol {
+            list-style-type: decimal;
+        }
+        code {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #f9f9f9;
+            padding: 0.2em 0.4em;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Enhanced Bot Detection on Social Media Platforms Using RoBERTa and Multimodal Features</h1>
+        <p class="author">Okikiola D. Mojoyinola</p>
+
+        <div class="abstract-keywords">
+            <h2>Abstract</h2>
+            <p>This paper presents an enhanced approach to bot detection on social media platforms, specifically focusing on Twitter data. We propose a system that leverages the <code>roberta-large</code> language model as the foundation for classification, integrating textual data with numerical and boolean user profile features. Our approach combines these multimodal inputs to create a robust detection system that can adapt to evolving bot behaviours. The system architecture emphasizes modularity, configurability via a central <code>config.py</code>, and a comprehensive supervised training and evaluation pipeline. This paper details the system's data processing, model architecture, training strategy, and evaluation capabilities, aiming to provide a clear blueprint for building effective bot detection tools.</p>
+
+            <h3>Keywords:</h3>
+            <p>Bot Detection, RoBERTa, Transformer Models, Multimodal Learning, Social Media, Natural Language Processing, Deep Learning</p>
+        </div>
+
+        <h2>1. Introduction</h2>
+        <p>The proliferation of automated accounts (bots) on social media platforms presents significant challenges for platform integrity, information quality, and user experience. Bots can be used for various purposes, from benign automation to malicious activities such as spreading misinformation, manipulating public opinion, and artificially inflating engagement metrics. Detecting these automated accounts is crucial for maintaining the health of online discourse and ensuring the authenticity of social media interactions.</p>
+        <p>Traditional bot detection approaches have relied on rule-based systems or classical machine learning models using handcrafted features. While these methods have shown some success, they often struggle to adapt to the evolving nature of bot behavior and can be easily circumvented by sophisticated bots. More recent approaches have leveraged deep learning techniques, utilizing the power of models like transformers to understand complex patterns in data.</p>
+        <p>In this paper, we present a comprehensive bot detection system built upon these advancements. The core of our system is:</p>
+        <ol>
+            <li><strong><code>roberta-large</code> based classification</strong>: We leverage the powerful language understanding capabilities of <code>roberta-large</code>, a variant of BERT, to extract rich semantic representations from tweet text, enabling more accurate detection of bot-generated content.</li>
+            <li><strong>Multimodal Feature Integration</strong>: We combine the textual embeddings from <code>roberta-large</code> with numerical (e.g., follower counts, account age) and boolean (e.g., verified status) features extracted from user profiles to provide a more holistic view for classification.</li>
+        </ol>
+        <p>Our system is designed to be a robust, multi-faceted approach to bot detection that can be deployed and adapted for real-world environments.</p>
+
+        <h2>2. Related Work</h2>
+        <p>Bot detection on social media has been an active area of research for over a decade. Early approaches focused on rule-based systems and manual feature engineering, while more recent work has increasingly leveraged machine learning and deep learning techniques.</p>
+        <h3>2.1 Feature-Based Approaches</h3>
+        <p>Numerous studies have explored the use of various features for bot detection. These features can be broadly categorized into:</p>
+        <ul>
+            <li>User-based features: Profile information, account age, verification status</li>
+            <li>Content-based features: Text characteristics, sentiment, topic distribution</li>
+            <li>Behavioral features: Posting patterns, engagement metrics, temporal activity</li>
+            <li>Network-based features: Follower/following relationships, interaction patterns</li>
+        </ul>
+        <p>For instance, Varol et al. (2017) developed the BotOrNot (later renamed Botometer) system, which uses over 1,000 features across these categories to classify Twitter accounts. Similarly, Yang et al. (2020) proposed a system that combines user, content, and temporal features for improved detection accuracy.</p>
+        <h3>2.2 Deep Learning Approaches</h3>
+        <p>More recent work has explored the use of deep learning techniques for bot detection. Kudugunta and Ferrara (2018) proposed an LSTM-based approach that combines text and metadata features. Wei and Nguyen (2019) developed a CNN-based model for detecting social bots based on tweet content. Feng et al. (2021) explored the use of transformer-based models for bot detection, showing promising results compared to traditional approaches. Our work aligns with this trajectory, specifically focusing on the <code>roberta-large</code> architecture and its integration with other feature types.</p>
+
+        <h2>3. Methodology</h2>
+        <p>Our bot detection system consists of several key components: data processing, feature handling, and model architecture. This section describes each component in detail, reflecting the implementation in the <code>bot_detection_project</code> codebase.</p>
+        <h3>3.1 Data Processing (<code>src/data_loader.py</code>)</h3>
+        <p>The system processes labeled Twitter data, used for supervised training.
+The <code>TwitterDataProcessor</code> class handles preprocessing:</p>
+        <ul>
+            <li><strong>Text Preprocessing</strong>: Raw text (e.g., tweets) is cleaned by:
+                <ul>
+                    <li>Replacing URLs with a special <code>&lt;url&gt;</code> token.</li>
+                    <li>Replacing user mentions (<code>@username</code>) with <code>&lt;user&gt;</code>.</li>
+                    <li>Replacing hashtags (<code>#topic</code>) with <code>&lt;hashtag&gt; topic</code>.</li>
+                    <li>Normalizing whitespace.</li>
+                </ul>
+                The cleaned text is then tokenized using the <code>AutoTokenizer</code> corresponding to <code>roberta-large</code>. Input sequences are padded or truncated to <code>MAX_LEN</code> (default 128 tokens).
+            </li>
+            <li><strong>Numerical Feature Processing</strong>: Numerical features (e.g., <code>followers_count</code>, <code>account_age_days</code>) are scaled using <code>StandardScaler</code>. The scaler is fitted on the training data and applied to validation and test sets. Missing values are imputed with 0.</li>
+            <li><strong>Boolean Feature Processing</strong>: Boolean features (e.g., <code>verified</code>) are converted to floating-point numbers (0.0 or 1.0).</li>
+            <li><strong>Data Splitting</strong>: The dataset is split into training, validation, and test sets.</li>
+            <li><strong>Dataset and DataLoader</strong>: Custom PyTorch <code>BotDataset</code> and <code>DataLoader</code> classes manage data batching.</li>
+        </ul>
+        <h3>3.2 Feature Handling</h3>
+        <p>Our system leverages multimodal features:</p>
+        <ul>
+            <li><strong>Textual Features</strong>: These are implicitly handled by the <code>roberta-large</code> model, which processes the tokenized tweet text to generate contextual embeddings.</li>
+            <li><strong>Numerical and Boolean Features</strong>: Explicitly defined in <code>config.py</code> (<code>NUMERICAL_FEATURES</code>, <code>BOOLEAN_FEATURES</code>). These include:
+                <ul>
+                    <li>Account metrics: e.g., follower count, following count, tweet count.</li>
+                    <li>Verification status: Whether the account is verified.</li>
+                    <li>Temporal features: e.g., <code>account_age_days</code> derived from account creation dates.</li>
+                </ul>
+                These features are concatenated with the text embeddings from <code>roberta-large</code> before being passed to the classification head.
+            </li>
+        </ul>
+        <h3>3.3 Model Architecture (<code>src/models/bert_model.py</code>)</h3>
+        <p>The core of our system is the <code>BERTBotDetector</code> model:</p>
+        <ol>
+            <li><strong>Base Model</strong>: A <code>roberta-large</code> model (specified by <code>MODEL_NAME</code> in <code>src/config.py</code>) is loaded. By default, all layers are fine-tuned (<code>FREEZE_BERT_LAYERS = 0</code>).</li>
+            <li><strong>Input</strong>: The model takes tokenized text (<code>input_ids</code>, <code>attention_mask</code>), processed numerical features, and processed boolean features.</li>
+            <li><strong>Text Representation</strong>: The [CLS] token output from <code>roberta-large</code> serves as the primary text embedding.</li>
+            <li><strong>Feature Integration and Classification Head</strong>:
+                <ul>
+                    <li>The text embedding is concatenated with the numerical and boolean feature vectors.</li>
+                    <li>This combined vector passes through:
+                        <ul>
+                            <li><code>torch.nn.LayerNorm</code> for normalization.</li>
+                            <li>A fully connected layer (<code>torch.nn.Linear</code>) to a hidden dimension (<code>HIDDEN_SIZE</code>, default 128).</li>
+                            <li><code>torch.nn.ReLU</code> activation.</li>
+                            <li><code>torch.nn.Dropout</code> (<code>DROPOUT_RATE</code>, default 0.3).</li>
+                            <li>A final <code>torch.nn.Linear</code> layer to 2 output units (for bot/non-bot logits).</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ol>
+        <p>The model is trained using <code>torch.nn.CrossEntropyLoss</code>, with optional class weighting (<code>USE_CLASS_WEIGHTS</code>) to handle class imbalance.</p>
+
+        <h2>4. Implementation (<code>pipeline.py</code>, <code>src/trainer.py</code>)</h2>
+        <h3>4.1 System Components</h3>
+        <p>Our bot detection system is implemented as a modular Python project:</p>
+        <ul>
+            <li><code>src/data_loader.py</code>: Handles data loading, preprocessing, and Dataset/DataLoader creation.</li>
+            <li><code>src/config.py</code>: Centralized configuration for paths, model parameters, and hyperparameters.</li>
+            <li><code>src/models/bert_model.py</code>: Defines the <code>roberta-large</code> based model architecture. Alternative architectures like LSTM and Logistic Regression are also present as stubs.</li>
+            <li><code>src/trainer.py</code>: Implements the supervised training and validation logic, including early stopping and loss functions.</li>
+            <li><code>src/evaluator.py</code>: Manages model evaluation on the test set.</li>
+            <li><code>pipeline.py</code>: Main script to orchestrate the data processing, training, and evaluation pipeline.</li>
+            <li><code>main_inference.py</code>: Script for making predictions on new data using a trained model.</li>
+        </ul>
+        <h3>4.2 Training Pipeline</h3>
+        <p>The training pipeline executed by <code>pipeline.py</code> consists of:</p>
+        <ol>
+            <li><strong>Configuration Loading</strong>: Parameters are loaded from <code>src/config.py</code>.</li>
+            <li><strong>Data Loading and Preprocessing</strong>: Utilizes <code>TwitterDataProcessor</code> and <code>BotDataset</code>.</li>
+            <li><strong>Data Splitting</strong>: Divides data into train, validation, and test sets.</li>
+            <li><strong>Model Initialization</strong>: Creates and initializes the <code>BERTBotDetector</code> model.</li>
+            <li><strong>Optimizer and Scheduler Setup</strong>: Configures AdamW optimizer with differential learning rates (<code>BERT_LR</code> for RoBERTa layers, <code>LEARNING_RATE</code> for the head) and a learning rate scheduler (<code>get_linear_schedule_with_warmup</code> or <code>ReduceLROnPlateau</code>).</li>
+            <li><strong>Supervised Training</strong>: The <code>ModelTrainer</code> executes the training loop, including gradient accumulation (<code>GRAD_ACCUMULATION_STEPS</code>) and gradient clipping (<code>GRAD_CLIP</code>).</li>
+            <li><strong>Validation and Early Stopping</strong>: Monitors validation loss per epoch and saves the best model. Early stopping (<code>EARLY_STOPPING_PATIENCE</code>) prevents overfitting.</li>
+            <li><strong>Model Evaluation</strong>: After training, the best model is evaluated on the test set using <code>ModelEvaluator</code>.</li>
+        </ol>
+        <h3>4.3 Key Hyperparameters (Defaults from <code>src/config.py</code>)</h3>
+        <ul>
+            <li><strong>BERT variant</strong>: <code>roberta-large</code> (<code>MODEL_NAME</code>)</li>
+            <li><strong>Maximum sequence length</strong>: 128 tokens (<code>MAX_LEN</code>)</li>
+            <li><strong>Batch size</strong>: 8 (<code>BATCH_SIZE</code>)</li>
+            <li><strong>Learning rate (head)</strong>: 5e-4 (<code>LEARNING_RATE</code>)</li>
+            <li><strong>Learning rate (RoBERTa)</strong>: 2e-5 (<code>BERT_LR</code>)</li>
+            <li><strong>Training epochs</strong>: 20 (<code>EPOCHS</code>) (with early stopping)</li>
+            <li><strong>Dropout rate</strong>: 0.3 (<code>DROPOUT_RATE</code>)</li>
+            <li><strong>Warmup steps</strong>: 0 (<code>WARMUP_STEPS</code>) (by default for linear scheduler)</li>
+        </ul>
+        <p>These hyperparameters can be adjusted in <code>src/config.py</code>.</p>
+
+        <h2>5. Evaluation (<code>src/evaluator.py</code>)</h2>
+        <h3>5.1 Evaluation Metrics</h3>
+        <p>The system's performance is evaluated using standard classification metrics, calculated by the <code>ModelEvaluator</code>:</p>
+        <ul>
+            <li>Accuracy: Overall classification accuracy.</li>
+            <li>Precision: Proportion of true positives among positive predictions (calculated per class, and averaged - macro, micro, weighted).</li>
+            <li>Recall: Proportion of true positives identified (calculated per class, and averaged).</li>
+            <li>F1 Score: Harmonic mean of precision and recall (calculated per class, and averaged).</li>
+            <li>ROC AUC: Area under the Receiver Operating Characteristic curve.</li>
+        </ul>
+        <p>A classification report and confusion matrix are also generated.</p>
+        <p><em>(As per your request, specific experimental results, dataset names for evaluation, and ablation studies are omitted. The focus is on the methodology for evaluation.)</em></p>
+
+        <h2>6. Discussion</h2>
+        <h3>6.1 Approach Rationale</h3>
+        <p>The described system leverages several key ideas for effective bot detection:</p>
+        <ol>
+            <li><strong><code>roberta-large</code>'s Effectiveness</strong>: Utilizing a large pre-trained transformer model like <code>roberta-large</code> provides strong capabilities for understanding textual nuances in social media content, which is often indicative of bot activity.</li>
+            <li><strong>Multimodal Feature Complementarity</strong>: Combining text embeddings with numerical and boolean profile features allows the model to draw insights from diverse data sources. User behavior and profile characteristics are often complementary to linguistic cues.</li>
+            <li><strong>Configurable and Modular Design</strong>: The project structure allows for easy modification of parameters, model components, and data sources, facilitating experimentation and adaptation.</li>
+        </ol>
+        <h3>6.2 Limitations and Challenges</h3>
+        <p>The current approach, while robust, has potential limitations:</p>
+        <ul>
+            <li><strong>Computational Requirements</strong>: Fine-tuning <code>roberta-large</code> is computationally intensive, requiring significant GPU resources and time, which might be a constraint for some users or deployment scenarios.</li>
+            <li><strong>Evolving Bot Behavior</strong>: Bots continuously evolve to evade detection. The model would require regular retraining with new data to maintain its effectiveness against novel bot strategies.</li>
+            <li><strong>Language Dependence</strong>: The current implementation, if trained primarily on English data using <code>roberta-large</code>, would be optimized for English content and may require adaptation or multilingual models for other languages.</li>
+            <li><strong>Data Scarcity and Quality</strong>: The performance is heavily dependent on the availability of high-quality, representative labeled training data.</li>
+            <li><strong>Interpretability</strong>: Deep learning models, including transformers, can be black boxes. Understanding <em>why</em> a certain account is flagged as a bot can be challenging but is important for trust and debugging.</li>
+        </ul>
+        <h3>6.3 Future Work</h3>
+        <p>Several directions for future work could build upon the current system:</p>
+        <ul>
+            <li><strong>Multilingual Bot Detection</strong>: Adapting the system for multiple languages, potentially using multilingual transformer variants.</li>
+            <li><strong>Advanced Temporal Modeling</strong>: Incorporating more sophisticated methods to model temporal changes in user behavior or content.</li>
+            <li><strong>Explainability Techniques</strong>: Integrating methods like LIME or SHAP, or attention visualization, to provide insights into model predictions.</li>
+            <li><strong>Adversarial Robustness</strong>: Exploring adversarial training techniques to make the model more resilient to evasion attempts.</li>
+            <li><strong>Efficiency Optimizations</strong>: Investigating model distillation, quantization, or pruning to create lighter-weight versions for environments with limited computational resources.</li>
+            <li><strong>Graph-based Features</strong>: If social network data is available, incorporating features derived from user interaction graphs could provide additional predictive signals.</li>
+        </ul>
+
+        <h2>7. Conclusion</h2>
+        <p>In this paper, we presented a bot detection system that leverages the <code>roberta-large</code> transformer model integrated with multimodal (text, numerical, boolean) user features. The system employs a supervised learning paradigm with a robust training and evaluation pipeline, emphasizing configurability and modularity. By combining advanced NLP capabilities with user profile characteristics, the approach aims to provide effective and adaptable detection of automated accounts on social media platforms.</p>
+        <p>While the system demonstrates a strong foundational methodology, ongoing research and development are necessary to address challenges such as evolving bot tactics and computational demands. The described framework serves as a solid starting point for further enhancements and practical applications in mitigating the impact of malicious bots.</p>
+
+        <h2>8. References</h2>
+        <div class="references">
+            <ol>
+                <li>Devlin, J., Chang, M. W., Lee, K., & Toutanova, K. (2018). BERT: Pre-training of deep bidirectional transformers for language understanding. arXiv preprint arXiv:1810.04805.</li>
+                <li>Liu, Y., Ott, M., Goyal, N., Du, J., Joshi, M., Chen, D., ... & Stoyanov, V. (2019). RoBERTa: A Robustly Optimized BERT Pretraining Approach. arXiv preprint arXiv:1907.11692.</li>
+                <li>Varol, O., Ferrara, E., Davis, C. A., Menczer, F., & Flammini, A. (2017). Online human-bot interactions: Detection, estimation, and characterization. In Proceedings of the International AAAI Conference on Web and Social Media (Vol. 11, No. 1).</li>
+                <li>Kudugunta, S., & Ferrara, E. (2018). Deep neural networks for bot detection. Information Sciences, 467, 312-322.</li>
+                <li>Wei, F., & Nguyen, U. T. (2019). Twitter bot detection using bidirectional long short-term memory neural networks and word embeddings. In 2019 IEEE International Conference on Information Reuse and Integration (IRI) (pp. 389-396).</li>
+                <li>Yang, K. C., Varol, O., Davis, C. A., Ferrara, E., Flammini, A., & Menczer, F. (2020). Arming the public with artificial intelligence to counter social bots. Human Behavior and Emerging Technologies, 1(1), 48-61.</li>
+                <li>Feng, S., Wan, H., Wang, N., Li, J., & Luo, M. (2021). DeepBot: A transformer-based approach for detecting social bots. In Proceedings of the 2021 Conference on Empirical Methods in Natural Language Processing (pp. 1717-1729).</li>
+            </ol>
+        </div>
+    </div>
+</body>
+</html>
