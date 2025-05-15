@@ -20,8 +20,8 @@ os.makedirs(RESULTS_DIR, exist_ok=True)
 # Model parameters
 MODEL_NAME = "roberta-large" # Larger RoBERTa model for optimal cross-platform performance
 MAX_LEN = 128 # Optimized sequence length for the dataset's short tweets
-BATCH_SIZE = 8  # Further reduced batch size for the larger model to avoid memory issues
-EPOCHS = 20 # Increased from 12 to 20 for better learning opportunity
+BATCH_SIZE = 8 
+EPOCHS = 30 
 DROPOUT_RATE = 0.3 # Moderate dropout for balanced data
 
 # --- FIX: Adjusted Learning Rates --- 
@@ -45,7 +45,7 @@ BOOLEAN_FEATURES = ["Verified"]
 TARGET_FEATURE = "Bot Label"
 
 # Other settings
-RANDOM_SEED = 123 # Changed from 42 to avoid potential initialization issues
+RANDOM_SEED = 123 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 TEST_SPLIT_SIZE = 0.15
 VALID_SPLIT_SIZE = 0.15 # Of the remaining data after test split
