@@ -107,17 +107,13 @@ class ModelTrainer:
         
         # --- Freezing BERT layers logic (controlled by config) --- 
         if hasattr(self.model, 'bert'):
-            # For RoBERTa-large, use a more sophisticated layer freezing approach
-            # Keep embeddings frozen (they contain general language knowledge)
             print("Freezing RoBERTa embeddings layer")
             for param in self.model.bert.embeddings.parameters():
                 param.requires_grad = False
                 
-            # Optimize for dataset: Freeze more layers since the dataset is simple
-            # For RoBERTa-large with 24 layers, freeze the first 20 layers
-            # This keeps only 4 layers trainable, sufficient for this dataset
+            
             num_layers = len(self.model.bert.encoder.layer)
-            layers_to_freeze = int(num_layers * 5/6)  # Freeze 5/6 of layers
+            layers_to_freeze = int(num_layers * 5/6) 
             
             print(f"RoBERTa has {num_layers} layers. Freezing first {layers_to_freeze} layers.")
             for i, layer in enumerate(self.model.bert.encoder.layer):
@@ -129,7 +125,6 @@ class ModelTrainer:
                         param.requires_grad = True
                     print(f"Layer {i} is trainable")
             
-            # Always keep pooler trainable for classification tasks
             if hasattr(self.model.bert, 'pooler'):
                 for param in self.model.bert.pooler.parameters():
                     param.requires_grad = True

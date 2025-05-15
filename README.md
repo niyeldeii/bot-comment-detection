@@ -49,7 +49,7 @@ The default model is a fine-tuned BERT model, but the framework also includes im
     *   Early Stopping: Monitors validation loss and saves the best model checkpoint.
     *   Gradient Accumulation & Clipping: Supported for stable training of large models.
 *   **Evaluation**: Calculates Precision, Recall, F1-Score, and ROC-AUC. Generates classification reports and confusion matrices. Results are saved to the `results/` directory from the main training pipeline.
-*   **Inference**: Uses `main_inference.py` for making predictions on new data with a trained model. (Note: `main_inference.py` would need to load a saved model checkpoint and the corresponding scaler if features were scaled during training).
+*   **Inference**: Uses `main_inference.py` for making predictions on new data with a trained model.
 *   **Colab Ready**: Designed for easy setup and execution in Google Colab.
 
 ## Setup and Usage (Google Colab)

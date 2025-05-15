@@ -21,7 +21,7 @@ os.makedirs(RESULTS_DIR, exist_ok=True)
 MODEL_NAME = "roberta-large" # Larger RoBERTa model for optimal cross-platform performance
 MAX_LEN = 128 # Optimized sequence length for the dataset's short tweets
 BATCH_SIZE = 8 
-EPOCHS = 30 
+EPOCHS = 20 
 DROPOUT_RATE = 0.3 # Moderate dropout for balanced data
 
 # --- FIX: Adjusted Learning Rates --- 

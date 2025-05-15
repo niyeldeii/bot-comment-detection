@@ -1,9 +1,5 @@
 # Bot Detection Model - Colab Instructions
 
-## Overview
-
-This notebook provides instructions for running the fixed bot detection model in Google Colab. The model has been completely redesigned to address the learning issues in the original implementation.
-
 ## Setup Instructions
 
 1. Upload the `bot_detection_project_fixed.zip` file to your Google Drive.

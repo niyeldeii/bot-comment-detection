@@ -37,15 +37,7 @@ class LogisticRegressionBotDetector(nn.Module):
         # Apply the linear layer
         logits = self.linear(combined_features)
         return logits
-
-    # Note: This model expects the features to be pre-combined before being passed to forward.
-    # The trainer or pipeline script will need to handle the feature combination logic
-    # similar to how it's done within the BERT/LSTM models if this LR model is used.
-    # For simplicity in swapping, we might adjust the BERT/LSTM models to also accept
-    # pre-combined features or adjust the trainer to handle this difference.
-    # For now, we assume the trainer will adapt. A more robust implementation might involve
-    # creating a base model class or a wrapper.
-
+        
     def predict(self, combined_features: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
         """
         Make predictions with the model
