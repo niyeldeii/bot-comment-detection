@@ -97,6 +97,7 @@
 
         <h2>1. Introduction</h2>
         <p>The proliferation of automated accounts (bots) on social media platforms presents significant challenges for platform integrity, information quality, and user experience. Bots can be used for various purposes, from benign automation to malicious activities such as spreading misinformation, manipulating public opinion, and artificially inflating engagement metrics. Detecting these automated accounts is crucial for maintaining the health of online discourse and ensuring the authenticity of social media interactions.</p>
+        <p>The increasing sophistication of online bots, particularly with the emergence of powerful Large Language Models (LLMs), presents a significant challenge. These advanced bots can generate remarkably human-like text and engage in complex interactions, making their detection more critical and difficult than ever. Incidents such as the undisclosed deployment of AI bots in online forums to influence user opinions <a href="#ref-nbc-bots">[Yang, see references]</a> highlight the urgency of this problem. Therefore, a primary aim of this project is to develop a robust detection mechanism capable of combating such issues. By leveraging the nuanced language understanding capabilities of advanced transformer models like RoBERTa, combined with insightful behavioral features, this work seeks to contribute to more reliable and adaptive bot detection systems that can evolve alongside the ever-improving capabilities of automated entities.</p>
         <p>Traditional bot detection approaches have relied on rule-based systems or classical machine learning models using handcrafted features. While these methods have shown some success, they often struggle to adapt to the evolving nature of bot behavior and can be easily circumvented by sophisticated bots. More recent approaches have leveraged deep learning techniques, utilizing the power of models like transformers to understand complex patterns in data.</p>
         <p>In this paper, we present a comprehensive bot detection system built upon these advancements. The core of our system is:</p>
         <ol>
@@ -233,33 +234,14 @@ The <code>TwitterDataProcessor</code> class handles preprocessing:</p>
         </ul>
         <p>While these early results indicated potential, comprehensive training and more extensive evaluation were unfortunately limited by available computational resources, specifically the constraints of the Google Colab free tier.</p>
 
-        <h2>6. Discussion</h2>
-        <h3>6.1 Approach Rationale</h3>
-        <p>The described system leverages several key ideas for effective bot detection:</p>
-        <ol>
-            <li><strong><code>roberta-large</code>'s Effectiveness</strong>: Utilizing a large pre-trained transformer model like <code>roberta-large</code> provides strong capabilities for understanding textual nuances in social media content, which is often indicative of bot activity.</li>
-            <li><strong>Multimodal Feature Complementarity</strong>: Combining text embeddings with numerical and boolean profile features allows the model to draw insights from diverse data sources. User behavior and profile characteristics are often complementary to linguistic cues.</li>
-            <li><strong>Configurable and Modular Design</strong>: The project structure allows for easy modification of parameters, model components, and data sources, facilitating experimentation and adaptation.</li>
-        </ol>
-        <h3>6.2 Limitations and Challenges</h3>
-        <p>The current approach, while robust, has potential limitations:</p>
+        <h2>6. Limitations and Future Work</h2>
+        <p>While the model demonstrates promising capabilities, its performance and generalizability are subject to certain limitations, primarily related to the dataset:</p>
         <ul>
-            <li><strong>Computational Requirements</strong>: Fine-tuning <code>roberta-large</code> is computationally intensive, requiring significant GPU resources and time, which might be a constraint for some users or deployment scenarios.</li>
-            <li><strong>Evolving Bot Behavior</strong>: Bots continuously evolve to evade detection. The model would require regular retraining with new data to maintain its effectiveness against novel bot strategies.</li>
-            <li><strong>Language Dependence</strong>: The current implementation, if trained primarily on English data using <code>roberta-large</code>, would be optimized for English content and may require adaptation or multilingual models for other languages.</li>
-            <li><strong>Data Scarcity and Quality</strong>: The performance is heavily dependent on the availability of high-quality, representative labeled training data.</li>
-            <li><strong>Interpretability</strong>: Deep learning models, including transformers, can be black boxes. Understanding <em>why</em> a certain account is flagged as a bot can be challenging but is important for trust and debugging.</li>
+            <li><strong>Dataset Characteristics</strong>: The primary limitation is the nature of the dataset used for training and evaluation. The model's effectiveness is highly dependent on the size, diversity, and specific characteristics of this data. A dataset that doesn't fully represent the breadth of bot behaviors or the nuances of interactions on different platforms may limit the model's real-world applicability. Expanding the dataset to include a wider variety of bot types, languages, and online environments is crucial for enhancing robustness.</li>
+            <li><strong>Computational Constraints</strong>: Training advanced models like <code>roberta-large</code> optimally requires substantial computational resources. The development and training conducted for this paper were subject to resource limitations (e.g., Google Colab free tier), which constrained the number of epochs and the scope of hyperparameter exploration.</li>
+            <li><strong>Evolving Bot Tactics</strong>: The landscape of bot development is dynamic, with new techniques emerging continuously. A model trained on historical data may see its performance degrade as bot strategies evolve.</li>
         </ul>
-        <h3>6.3 Future Work</h3>
-        <p>Several directions for future work could build upon the current system:</p>
-        <ul>
-            <li><strong>Multilingual Bot Detection</strong>: Adapting the system for multiple languages, potentially using multilingual transformer variants.</li>
-            <li><strong>Advanced Temporal Modeling</strong>: Incorporating more sophisticated methods to model temporal changes in user behavior or content.</li>
-            <li><strong>Explainability Techniques</strong>: Integrating methods like LIME or SHAP, or attention visualization, to provide insights into model predictions.</li>
-            <li><strong>Adversarial Robustness</strong>: Exploring adversarial training techniques to make the model more resilient to evasion attempts.</li>
-            <li><strong>Efficiency Optimizations</strong>: Investigating model distillation, quantization, or pruning to create lighter-weight versions for environments with limited computational resources.</li>
-            <li><strong>Graph-based Features</strong>: If social network data is available, incorporating features derived from user interaction graphs could provide additional predictive signals.</li>
-        </ul>
+        <p>Future work will prioritize acquiring and incorporating more diverse and extensive datasets. Additionally, we plan to explore more advanced feature engineering and investigate adaptive learning techniques to counteract the evolving nature of bots and improve the model's long-term efficacy.</p>
 
         <h2>7. Conclusion</h2>
         <p>In this paper, we presented a bot detection system that leverages the <code>roberta-large</code> transformer model integrated with multimodal (text, numerical, boolean) user features. The system employs a supervised learning paradigm with a robust training and evaluation pipeline, emphasizing configurability and modularity. By combining advanced NLP capabilities with user profile characteristics, the approach aims to provide effective and adaptable detection of automated accounts on social media platforms.</p>
@@ -275,6 +257,7 @@ The <code>TwitterDataProcessor</code> class handles preprocessing:</p>
                 <li>Wei, F., & Nguyen, U. T. (2019). Twitter bot detection using bidirectional long short-term memory neural networks and word embeddings. In 2019 IEEE International Conference on Information Reuse and Integration (IRI) (pp. 389-396).</li>
                 <li>Yang, K. C., Varol, O., Davis, C. A., Ferrara, E., Flammini, A., & Menczer, F. (2020). Arming the public with artificial intelligence to counter social bots. Human Behavior and Emerging Technologies, 1(1), 48-61.</li>
                 <li>Feng, S., Wan, H., Wang, N., Li, J., & Luo, M. (2021). DeepBot: A transformer-based approach for detecting social bots. In Proceedings of the 2021 Conference on Empirical Methods in Natural Language Processing (pp. 1717-1729).</li>
+                <li id="ref-nbc-bots">Yang, A. (Date to be confirmed - approx. late 2023/early 2024). <em>Researchers secretly infiltrated a popular Reddit forum with AI bots, causing outrage</em>. NBC News. Retrieved May 15, 2025, from https://www.nbcnews.com/tech/tech-news/reddiit-researchers-ai-bots-rcna203597</li>
             </ol>
         </div>
     </div>
