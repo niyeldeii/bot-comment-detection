@@ -361,14 +361,13 @@ class TwitterDataset(Dataset):
         if missing_bool_cols:
             raise ValueError(f"Dataset Init Error: Missing boolean columns in dataframe: {missing_bool_cols}")
             
-        if not self.is_test and TARGET_FEATURE not in self.dataframe.columns:
-            raise ValueError(f"Dataset Init Error: Target column ", TARGET_FEATURE, " not found in dataframe.")
-            
         # Store data directly instead of scaling here
         self.numerical_data = self.dataframe[self.numerical_cols_to_scale].values
         self.boolean_data = self.dataframe[BOOLEAN_FEATURES].astype(float).values # Ensure float for tensor
         self.texts = self.dataframe["cleaned_tweet"].values
-        if not self.is_test:
+        # Load targets if the target column exists in the DataFrame.
+        # This supports evaluation scenarios where is_test might be true but targets are available.
+        if TARGET_FEATURE in self.dataframe.columns:
             self.targets = self.dataframe[TARGET_FEATURE].values
         
     def __len__(self) -> int:
@@ -400,7 +399,7 @@ class TwitterDataset(Dataset):
             padding="max_length",
             truncation=True,
             return_attention_mask=True,
-            return_token_type_ids=True,  # Include token type IDs
+            return_token_type_ids=False,  # token_type_ids are not returned as they are not typically used by RoBERTa for single sequences.
             return_tensors="pt"
         )
         
@@ -428,12 +427,13 @@ class TwitterDataset(Dataset):
         sample = {
             "input_ids": encoding["input_ids"].flatten(),
             "attention_mask": encoding["attention_mask"].flatten(),
-            "token_type_ids": encoding["token_type_ids"].flatten(),
             "numerical_features": numerical_features,
             "boolean_features": boolean_features
         }
         
-        if not self.is_test:
+        # Include targets in the sample if the target column exists and targets were loaded.
+        # This ensures targets are available for evaluation even if is_test might be true.
+        if TARGET_FEATURE in self.dataframe.columns and hasattr(self, 'targets'):
             sample["targets"] = torch.tensor(self.targets[idx], dtype=torch.long)
             
         return sample

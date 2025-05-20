@@ -71,7 +71,6 @@ class BERTBotDetector(nn.Module):
         self,
         input_ids: torch.Tensor,
         attention_mask: torch.Tensor,
-        token_type_ids: torch.Tensor,
         numerical_features: torch.Tensor,
         boolean_features: torch.Tensor
     ) -> torch.Tensor:
@@ -79,10 +78,10 @@ class BERTBotDetector(nn.Module):
         Forward pass with simplified architecture optimized for the dataset
         """
         # Process text with BERT
+        # token_type_ids are omitted as they are not typically used by RoBERTa for single-sequence inputs.
         bert_output = self.bert(
             input_ids=input_ids, 
-            attention_mask=attention_mask,
-            token_type_ids=token_type_ids
+            attention_mask=attention_mask
         )
         
         # Get CLS token and process

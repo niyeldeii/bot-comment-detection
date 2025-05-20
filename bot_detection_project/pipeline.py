@@ -1,6 +1,7 @@
 import argparse
 import os
 import torch
+from src.evaluator import ModelEvaluator # Added import
 import numpy as np
 import json
 from datetime import datetime
@@ -88,8 +89,12 @@ def main(model_type: str = "bert"):
         )
         optimizer_name = "Adam"
     elif model_type.lower() == "logistic_regression":
+        # Initialize Logistic Regression with its own embedding layer. embedding_dim_lr is set to 100.
+        embedding_dim_lr = 100  # Embedding dimension for Logistic Regression
+        vocab_size = len(data_processor.tokenizer)
         model = LogisticRegressionBotDetector(
-            vocab_size=len(data_processor.tokenizer),
+            vocab_size=vocab_size,
+            embedding_dim=embedding_dim_lr,
             num_numerical_features=num_numerical,
             num_boolean_features=num_boolean
         )
@@ -154,8 +159,31 @@ if __name__ == "__main__":
     print("\n=== Starting training ===")
     metrics = trainer.train()
     
-    # Evaluate on test set
+    # Evaluate on test set using ModelEvaluator
     print("\n=== Evaluating on test set ===")
-    test_loss, test_acc, test_f1, test_precision, test_recall = trainer.evaluate(test_loader)
-    print(f"Test Loss: {test_loss:.4f}, Test Accuracy: {test_acc:.4f}")
-    print(f"Test F1: {test_f1:.4f}, Test Precision: {test_precision:.4f}, Test Recall: {test_recall:.4f}")
+    best_model_path = trainer.early_stopping.path
+
+    # Evaluate the best model (from early stopping) on the test set using ModelEvaluator for comprehensive metrics.
+    if os.path.exists(best_model_path):
+        print(f"Loading best model for test evaluation from {best_model_path}")
+        # Ensure the model is on the correct device before loading state_dict
+        model.to(DEVICE) 
+        model.load_state_dict(torch.load(best_model_path, map_location=DEVICE))
+        evaluator = ModelEvaluator(model=model, test_loader=test_loader, model_path=best_model_path)
+        test_metrics, test_report, test_cm = evaluator.evaluate()
+    else:
+        # Fallback: If best_model.pth is not found, evaluate the model state at the end of training.
+        print(f"Warning: Best model path {best_model_path} not found. Evaluating with the model state at the end of training.")
+        # MODEL_SAVE_DIR needs to be accessible here. It's imported from config.
+        last_model_path = os.path.join(MODEL_SAVE_DIR, 'last_model_state.pth')
+        torch.save(model.state_dict(), last_model_path)
+        # Ensure the model is on the correct device
+        model.to(DEVICE)
+        evaluator = ModelEvaluator(model=model, test_loader=test_loader, model_path=last_model_path)
+        test_metrics, test_report, test_cm = evaluator.evaluate()
+
+    # The old evaluation call is now replaced by the ModelEvaluator logic above.
+    # print("\n=== Evaluating on test set ===")
+    # test_loss, test_acc, test_f1, test_precision, test_recall = trainer.evaluate(test_loader)
+    # print(f"Test Loss: {test_loss:.4f}, Test Accuracy: {test_acc:.4f}")
+    # print(f"Test F1: {test_f1:.4f}, Test Precision: {test_precision:.4f}, Test Recall: {test_recall:.4f}")

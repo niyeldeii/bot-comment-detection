@@ -235,7 +235,6 @@ class ModelTrainer:
         for batch_num, batch in enumerate(self.train_loader):
             input_ids = batch['input_ids'].to(DEVICE)
             attention_mask = batch['attention_mask'].to(DEVICE)
-            token_type_ids = batch['token_type_ids'].to(DEVICE)
             numerical_features = batch['numerical_features'].to(DEVICE)
             boolean_features = batch['boolean_features'].to(DEVICE)
             targets = batch['targets'].to(DEVICE)
@@ -243,7 +242,6 @@ class ModelTrainer:
             outputs = self.model(
                 input_ids=input_ids,
                 attention_mask=attention_mask,
-                token_type_ids=token_type_ids,
                 numerical_features=numerical_features,
                 boolean_features=boolean_features
             )
@@ -338,7 +336,6 @@ class ModelTrainer:
             for batch in self.val_loader:
                 input_ids = batch['input_ids'].to(DEVICE)
                 attention_mask = batch['attention_mask'].to(DEVICE)
-                token_type_ids = batch['token_type_ids'].to(DEVICE)
                 numerical_features = batch['numerical_features'].to(DEVICE)
                 boolean_features = batch['boolean_features'].to(DEVICE)
                 targets = batch['targets'].to(DEVICE)
@@ -346,7 +343,6 @@ class ModelTrainer:
                 outputs = self.model(
                     input_ids=input_ids,
                     attention_mask=attention_mask,
-                    token_type_ids=token_type_ids,
                     numerical_features=numerical_features,
                     boolean_features=boolean_features
                 )
@@ -558,7 +554,6 @@ class ModelTrainer:
         for batch in self.val_loader:
             input_ids = batch['input_ids'].to(DEVICE)
             attention_mask = batch['attention_mask'].to(DEVICE)
-            token_type_ids = batch['token_type_ids'].to(DEVICE)
             numerical_features = batch['numerical_features'].to(DEVICE)
             boolean_features = batch['boolean_features'].to(DEVICE)
             targets = batch['targets'].to(DEVICE)
@@ -567,7 +562,7 @@ class ModelTrainer:
         # Analyze BERT features
         with torch.no_grad():
             # Get BERT output
-            bert_output = self.model.bert(input_ids=input_ids, attention_mask=attention_mask, token_type_ids=token_type_ids)
+            bert_output = self.model.bert(input_ids=input_ids, attention_mask=attention_mask)
             cls_token = bert_output.last_hidden_state[:, 0]
             
             # Get feature importance from weights
